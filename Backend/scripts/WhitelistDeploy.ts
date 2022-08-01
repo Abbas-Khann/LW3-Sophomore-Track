@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+const { ethers } = require("hardhat");
 
 const main = async () => {
   const whitelistContract = await ethers.getContractFactory("Whitelist");
