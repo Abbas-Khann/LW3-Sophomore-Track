@@ -7,7 +7,9 @@ const main = async () => {
 
   await deployedWhitelistedContract.deployed();
 
-  console.log("Deployed Contract Address: ", deployedWhitelistedContract.address);
+  console.log("Deployed Contract Address: ",
+               deployedWhitelistedContract.address
+            );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
