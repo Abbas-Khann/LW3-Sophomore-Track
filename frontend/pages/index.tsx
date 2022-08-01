@@ -2,7 +2,7 @@ import React from "react";
 
 const Home = () => {
   return <>
-    <h1>Shit better work!!!</h1>
+    <h1>Whitelist Dapp</h1>
   </>
 }
 
