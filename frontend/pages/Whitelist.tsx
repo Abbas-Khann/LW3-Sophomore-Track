@@ -14,7 +14,7 @@ const Whitelist = () => {
     const [amountOfWhitelisted, setAmountOfWhitelisted] = useState<number>(0);
     const [maxWhitelistedAddresses, setMaxWhitelistedAddresses] = useState<number>(0);
 
-    const web3ModalRef = useRef();
+    const web3ModalRef = useRef<any>();
 
     const getProviderOrSigner = async (needSigner: boolean = false): Promise<any> => {
         const provider = await web3ModalRef.current.connect();
