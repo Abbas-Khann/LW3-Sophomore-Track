@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "../node_modules/next/head";
+import Link from "../node_modules/next/link";
 
 const Home = () => {
   return <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]" >
@@ -14,7 +15,9 @@ const Home = () => {
     <div className="px-12 text-gray-900 decoration-rose-400 flex flex-col justify-center h-5/6 sm:px-44 md:px-64 lg:items-center">
         <h1 className="text-5xl mb-5">LW3 Sophomore Dapps</h1>
         <ul className="p-4 text-3xl">
+          <Link href="/Whitelist">
           <li className="list-disc cursor-pointer underline mb-2">Whitelist Dapp</li>
+          </Link>
           <li className="list-disc cursor-pointer underline mb-2">NFT Collection</li>
           <li className="list-disc cursor-pointer underline mb-2">ICO</li>
           <li className="list-disc cursor-pointer underline mb-2">DAO</li>
