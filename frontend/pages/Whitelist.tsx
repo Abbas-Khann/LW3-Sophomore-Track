@@ -50,13 +50,13 @@ const Whitelist = () => {
             setJoinedWhitelist(true);
         }
         catch(err){
-            console.error(err)
-            if(joinedWhitelist) {
+            if(joinedWhitelist === true) {         
                 toast.error("You have already joined the Whitelist!");
             }
             if(amountOfWhitelisted > maxWhitelistedAddresses) {
                 toast.error("No more Whitelist Spots left!!!")
             }
+            console.error(err)
         }
     }
 
@@ -173,6 +173,7 @@ const Whitelist = () => {
             connectWallet();
             getNumberOfWhitelisted();
             getMaxNumberOfWhitelisted();
+            checkIfAddressInWhitelist();
         }
     }, [walletConnected])
 
