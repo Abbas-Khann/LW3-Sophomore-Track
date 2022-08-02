@@ -133,7 +133,7 @@ const Whitelist = () => {
         if(walletConnected) {
             if(joinedWhitelist) {
                 return <button 
-                    className='border-2 transition duration-300 ease-out hover:ease-in bg-purple-800 text-3xl rounded px-3 py-2 text-white mb-3'>
+                    className=' transition duration-300 ease-out hover:ease-in  text-3xl rounded px-3 py-2 text-white mb-3'>
                     Thanks For Joining the Whitelist
                     </button>
             }
