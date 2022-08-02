@@ -32,7 +32,7 @@ const Whitelist = () => {
         return web3Provider;
     }
 
-    const addAddressToWL = async(): Promise<any> => {
+    const addAddressToWL = async(): Promise <void> => {
         try{
             const signer = await getProviderOrSigner(true);
 
@@ -54,7 +54,7 @@ const Whitelist = () => {
         }
     }
 
-    const getNumberOfWhitelisted = async(): Promise<any> => {
+    const getNumberOfWhitelisted = async(): Promise <void> => {
         try{
             const provider = await getProviderOrSigner();
 
@@ -72,7 +72,7 @@ const Whitelist = () => {
         }
     }
 
-    const checkIfAddressInWhitelist = async ():Promise <any> => {
+    const checkIfAddressInWhitelist = async ():Promise <void> => {
         try {
             const signer = await getProviderOrSigner(true);
     
@@ -90,6 +90,18 @@ const Whitelist = () => {
             console.error(err)
         }
 
+    }
+
+    const connectWallet = async ():Promise <void> => {
+        try{
+            await getProviderOrSigner();
+            setWalletConnected(true);
+            checkIfAddressInWhitelist();
+            getNumberOfWhitelisted();
+        }
+        catch(err){
+            console.error(err)
+        }
     }
 
 
