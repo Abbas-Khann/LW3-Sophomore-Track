@@ -47,6 +47,7 @@ const Whitelist = () => {
             setLoading(true);
             await tx.wait();
             setLoading(false);
+            toast.success("You have been added to the whitelist successfully!!!")
             setJoinedWhitelist(true);
         }
         catch(err){
@@ -132,7 +133,7 @@ const Whitelist = () => {
         if(walletConnected) {
             if(joinedWhitelist) {
                 return <button 
-                    className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'>
+                    className='border-2 transition duration-300 ease-out hover:ease-in bg-purple-800 text-3xl rounded px-3 py-2 text-white mb-3'>
                     Thanks For Joining the Whitelist
                     </button>
             }
