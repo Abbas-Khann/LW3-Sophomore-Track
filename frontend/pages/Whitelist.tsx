@@ -171,9 +171,6 @@ const Whitelist = () => {
                 disableInjectedProvider: false
             });
             connectWallet();
-            getNumberOfWhitelisted();
-            getMaxNumberOfWhitelisted();
-            checkIfAddressInWhitelist();
         }
     }, [walletConnected])
 
