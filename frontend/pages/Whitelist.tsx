@@ -1,7 +1,99 @@
-import React from 'react'
+import {useState, useEffect, useRef} from 'react'
 import Head from '../node_modules/next/head'
+import Web3Modal from 'web3modal';
+import { providers, Contract } from 'ethers';
+import { WHITELIST_CONTRACT_ADDRESS, WHITELIST_CONTRACT_ABI } from '../Constants/constants';
+import { toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const Whitelist = () => {
+
+    const [walletConnected, setWalletConnected] = useState<boolean>(false);
+    const [joinedWhitelist, setJoinedWhitelist] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [amountOfWhitelisted, setAmountOfWhitelisted] = useState<number>(0);
+
+    const web3ModalRef = useRef();
+
+    const getProviderOrSigner = async (needSigner: boolean = false): Promise<any> => {
+        const provider = await web3ModalRef.current.connect();
+        const web3Provider = new providers.Web3Provider(provider);
+
+        const { chainId } = await web3Provider.getNetwork();
+
+        if(chainId !== 80001) {
+            toast.warning("Change Your network to Mumbai");
+            throw new Error('Change your network to Polygon Testnet');
+        }
+        if(needSigner) {
+            const signer = web3Provider.getSigner();
+            return signer;
+        }
+        return web3Provider;
+    }
+
+    const addAddressToWL = async(): Promise<any> => {
+        try{
+            const signer = await getProviderOrSigner(true);
+
+            const WhitelistContract = new Contract(
+                WHITELIST_CONTRACT_ADDRESS,
+                WHITELIST_CONTRACT_ABI,
+                signer
+            );
+
+            const tx = await WhitelistContract.addAddressToWhitelist();
+            setLoading(true);
+            await tx.wait();
+            setLoading(false);
+            setJoinedWhitelist(true);
+        }
+        catch(err){
+            console.error(err)
+            toast.error("You are already Whitelisted!!!")
+        }
+    }
+
+    const getNumberOfWhitelisted = async(): Promise<any> => {
+        try{
+            const provider = await getProviderOrSigner();
+
+            const WhitelistContract = new Contract(
+                WHITELIST_CONTRACT_ADDRESS,
+                WHITELIST_CONTRACT_ABI,
+                provider
+            );
+
+            const numberOfWL: number = await WhitelistContract.numAddressesWhitelisted();
+            setAmountOfWhitelisted(numberOfWL);
+        }
+        catch(err){
+            console.error(err)
+        }
+    }
+
+    const checkIfAddressInWhitelist = async ():Promise <any> => {
+        try {
+            const signer = await getProviderOrSigner(true);
+    
+            const WhitelistContract = new Contract(
+                WHITELIST_CONTRACT_ADDRESS,
+                WHITELIST_CONTRACT_ABI,
+                signer
+            )
+    
+            const address = await signer.getAddress();
+            const _joinedWhitelist: boolean = await WhitelistContract.whitelistedAddresses(address);
+            setJoinedWhitelist(_joinedWhitelist)
+            
+        } catch (err) {
+            console.error(err)
+        }
+
+    }
+
+
+
   return (
     <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]" >
         <Head>
@@ -18,6 +110,7 @@ const Whitelist = () => {
         </h1>
         <button
         className='border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
+        onClick={addAddressToWL}
         >
         Join Whitelist
         </button>
