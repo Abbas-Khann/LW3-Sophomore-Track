@@ -12,6 +12,7 @@ const Whitelist = () => {
     const [joinedWhitelist, setJoinedWhitelist] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [amountOfWhitelisted, setAmountOfWhitelisted] = useState<number>(0);
+    const [maxWhitelistedAddresses, setMaxWhitelistedAddresses] = useState<number>(0);
 
     const web3ModalRef = useRef();
 
@@ -50,7 +51,12 @@ const Whitelist = () => {
         }
         catch(err){
             console.error(err)
-            toast.error("You are already Whitelisted!!!")
+            if(joinedWhitelist) {
+                toast.error("You have already joined the Whitelist!");
+            }
+            if(amountOfWhitelisted > maxWhitelistedAddresses) {
+                toast.error("No more Whitelist Spots left!!!")
+            }
         }
     }
 
@@ -68,6 +74,23 @@ const Whitelist = () => {
             setAmountOfWhitelisted(numberOfWL);
         }
         catch(err){
+            console.error(err)
+        }
+    }
+
+    const getMaxNumberOfWhitelisted = async():Promise <void> => {
+        try {
+            const provider = await getProviderOrSigner();
+
+            const WhitelistContract = new Contract(
+                WHITELIST_CONTRACT_ADDRESS,
+                WHITELIST_CONTRACT_ABI,
+                provider
+            );
+
+            const _maxWhitelistedAddressses = await WhitelistContract.maxWhiteListedAddresses();
+            setMaxWhitelistedAddresses(_maxWhitelistedAddressses);
+        } catch (err) {
             console.error(err)
         }
     }
@@ -98,6 +121,7 @@ const Whitelist = () => {
             setWalletConnected(true);
             checkIfAddressInWhitelist();
             getNumberOfWhitelisted();
+            getMaxNumberOfWhitelisted();
         }
         catch(err){
             console.error(err)
@@ -139,6 +163,19 @@ const Whitelist = () => {
         }
     }
 
+    useEffect(() => {
+        if(!walletConnected) {
+            web3ModalRef.current = new Web3Modal({
+                network: "mumbai",
+                providerOptions: {},
+                disableInjectedProvider: false
+            });
+            connectWallet();
+            getNumberOfWhitelisted();
+            getMaxNumberOfWhitelisted();
+        }
+    }, [walletConnected])
+
 
 
   return (
@@ -156,7 +193,7 @@ const Whitelist = () => {
             Whitelist Dapp
         </h1>
         {renderButton()}
-        <p className='text-2xl'>Total Members Joined is 13</p>
+        <p className='text-2xl'>Total Members Joined is {amountOfWhitelisted}</p>
     </div>
     </main>
   )
