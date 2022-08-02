@@ -104,6 +104,41 @@ const Whitelist = () => {
         }
     }
 
+    const renderButton = (): JSX.Element => {
+        if(walletConnected) {
+            if(joinedWhitelist) {
+                return <button 
+                    className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'>
+                    Thanks For Joining the Whitelist
+                    </button>
+            }
+            else if(loading) {
+                return <button 
+                        className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
+                        >
+                    Loading ...
+                </button>
+            }
+            else{
+                return <button
+                onClick={addAddressToWL}
+                className='border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
+                >
+                Join the Whitelist
+                </button>
+            }
+        } else {
+            return (
+                <button
+                className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
+                onClick={connectWallet}
+                >
+                Connect Wallet
+                </button>
+            )
+        }
+    }
+
 
 
   return (
@@ -120,12 +155,7 @@ const Whitelist = () => {
         <h1 className='text-5xl text-center py-4 text-white'>
             Whitelist Dapp
         </h1>
-        <button
-        className='border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
-        onClick={addAddressToWL}
-        >
-        Join Whitelist
-        </button>
+        {renderButton()}
         <p className='text-2xl'>Total Members Joined is 13</p>
     </div>
     </main>
