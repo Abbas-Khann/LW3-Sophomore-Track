@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './IWhitelist.sol';
 
-contract CryptoDevs is ERC721Enumerable, Ownable {
+contract KhaNFT is ERC721Enumerable, Ownable {
     string _baseTokenURI;
 
     uint256 public _price = 0.01 ether;
@@ -28,7 +28,7 @@ contract CryptoDevs is ERC721Enumerable, Ownable {
         _;
     }
 
-    constructor (string baseURI, address whitelistContract) ERC721 ("KHANFT", "AK") {
+    constructor (string baseURI, address whitelistContract) ERC721 ("KhaNFT", "AK") {
         _baseTokenURI = baseURI;
         whitelist = IWhitelist(whitelistContract);
     }
