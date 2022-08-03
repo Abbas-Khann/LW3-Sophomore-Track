@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -28,7 +28,7 @@ contract KhaNFT is ERC721Enumerable, Ownable {
         _;
     }
 
-    constructor (string baseURI, address whitelistContract) ERC721 ("KhaNFT", "AK") {
+    constructor (string memory baseURI, address whitelistContract) ERC721 ("KhaNFT", "AK") {
         _baseTokenURI = baseURI;
         whitelist = IWhitelist(whitelistContract);
     }
@@ -55,7 +55,7 @@ contract KhaNFT is ERC721Enumerable, Ownable {
         _safeMint(msg.sender, tokenIds);
     }
 
-    function baseURI() internal view virtual override returns(string memory) {
+    function _baseURI() internal view virtual override returns(string memory) {
         return _baseTokenURI;
     }
 
