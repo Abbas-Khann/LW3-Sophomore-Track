@@ -1,6 +1,5 @@
 const { ethers } = require("hardhat");
 require("dotenv").config({ path: "../.env" });
-// import { WHITELIST_CONTRACT_ADDRESS, METADATA_URL } from "../Constants/constants";
 const { WHITELIST_CONTRACT_ADDRESS, METADATA_URL } = require("../Constants/constants");
 
 const Main = async(): Promise<void> => {
