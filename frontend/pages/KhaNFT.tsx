@@ -2,12 +2,13 @@ import {useState, useEffect, useRef} from 'react';
 import Head from '../node_modules/next/head';
 import Web3Modal from 'web3modal';
 import { providers, Contract } from '../node_modules/ethers/lib/ethers';
+import { KhaNFTContractAddress, KHANFTCONTRACTABI } from '../Constants/constants';
 import { toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 const KhaNFT = () => {
 
-    
+
 
 
 

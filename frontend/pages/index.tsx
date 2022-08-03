@@ -18,7 +18,9 @@ const Home = () => {
           <Link href="/Whitelist">
           <li className="list-disc cursor-pointer underline mb-2">Whitelist Dapp</li>
           </Link>
+          <Link href="/KhaNFT">
           <li className="list-disc cursor-pointer underline mb-2">NFT Collection</li>
+          </Link>
           <li className="list-disc cursor-pointer underline mb-2">ICO</li>
           <li className="list-disc cursor-pointer underline mb-2">DAO</li>
           <li className="list-disc cursor-pointer underline mb-2">DeFi-Exchange</li>
