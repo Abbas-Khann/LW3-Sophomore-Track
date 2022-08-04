@@ -16,7 +16,7 @@ const KhaNFT = () => {
     const [tokenIdsMinted, setTokenIdsMinted] = useState <string> ("0");
     const web3ModalRef = useRef<any>();
     
-    const getProviderOrSigner = async (needSigner = false): Promise <void> => {
+    const getProviderOrSigner = async (needSigner: boolean = false): Promise <any> => {
       const provider = await web3ModalRef.current.connect();
       const web3Provider = new providers.Web3Provider(provider);
 
@@ -119,9 +119,13 @@ const KhaNFT = () => {
 
           const _owner: string = await nftContract.owner();
           const signer = await getProviderOrSigner(true);
-          const _address: string = signer.getAddress();
-          if (_address.toLowerCase() === _owner.toLowerCase()) {
+          const _address: Promise <string> = await signer.getAddress();
+          console.log("Owner Address: ", _owner)
+          const ownerAddress = await _address;
+          console.log("OwnerAddress new Variable:", ownerAddress);
+          if (ownerAddress.toLowerCase() === _owner.toLowerCase()) {
             setOwner(true);
+            console.log('statement executed!')
           }
       }
       catch (err) {
@@ -151,6 +155,151 @@ const KhaNFT = () => {
       }
     }
 
+    const checkIfPresaleEnded = async (): Promise <boolean> => {
+      try {
+        const provider = await getProviderOrSigner();
+
+        const nftContract = new Contract(
+          KhaNFTContractAddress,
+          KHANFTCONTRACTABI,
+          provider
+        );
+
+        const _presaleEnded = await nftContract.presaleEnded();
+
+        const hasEnded: boolean = _presaleEnded.lt(Math.floor(Date.now()/1000));
+
+        if(hasEnded) {
+          setPresaleEnded(true);
+        }
+        else {
+          setPresaleEnded(false);
+        }
+        return hasEnded;
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    const getTokenIdsMinted = async (): Promise <void> => {
+      try {
+        const provider = await getProviderOrSigner();
+
+        const nftContract = new Contract(
+          KhaNFTContractAddress,
+          KHANFTCONTRACTABI,
+          provider
+        );
+
+        const _tokenIds: number = await nftContract.tokenIds();
+
+        setTokenIdsMinted(_tokenIds.toString())
+      } 
+      catch (err) {
+        console.error(err)  
+      }
+    }
+
+    useEffect(() => {
+
+      if(!walletConnected) {
+        web3ModalRef.current = new Web3Modal({
+          network: "mumbai",
+          providerOptions: {},
+          disableInjectedProvider: false
+        });
+        connectWallet();
+
+        const _presaleStarted = checkIfPresaleStarted();
+        if(_presaleStarted) {
+          checkIfPresaleEnded();
+        }
+        getTokenIdsMinted();
+
+        const presaleEndedInterval = setInterval(async function () {
+          const _presaleStarted = await checkIfPresaleStarted();
+          if(_presaleStarted) {
+            const _presaleEnded = await checkIfPresaleEnded();
+            if(_presaleEnded) {
+              clearInterval(presaleEndedInterval);
+            }
+          }
+        }, 5 * 1000);
+
+        setInterval(async function () {
+          await getTokenIdsMinted();
+        }, 5 * 1000)
+      }
+    }, [walletConnected])
+
+    const renderButton = (): JSX.Element => {
+      if(!walletConnected) {
+        return (
+          <button
+          onClick={connectWallet}
+          className="border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-4"
+          >
+            Connect Wallet
+          </button>
+        );
+      }
+
+      if(loading) {
+        return (
+          <button
+          className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-4'
+          >
+          Loading ...
+          </button>
+        )
+      }
+
+      if(owner && !presaleStarted) {
+        return (
+          <button
+          className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-4'
+          onClick={startPresale}
+          >
+            Start Presale!
+          </button>
+        )
+      }
+
+      if(!presaleStarted) {
+        return (
+          <div
+          className='bg-purple-800 text-3xl rounded px-3 py-2 text-white my-4'
+          >
+            Presale Has not started yet!
+          </div>
+        )
+      }
+
+      if(!presaleStarted && !presaleEnded) {
+        return(
+          <button
+          className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-4'
+          onClick={presaleMint}
+          >
+          Presale has Started!!! If your address is whitelisted Mint a KhaNFT
+          </button>
+        )
+      }
+
+      if(presaleStarted && presaleEnded) {
+        return(
+          <button
+          className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-4'
+          onClick={publicMint}
+          >
+          Public Mint 🚀
+          </button>
+        )
+      }
+
+    }
+
+
   return (
     <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]" >
         <Head>
@@ -168,13 +317,9 @@ const KhaNFT = () => {
         <p
         className='text-2xl'
         >It's an NFT collection for Khans(giga Chads)</p>
-        {/* {renderButton()} */}
-        <button
-                className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-4'
-                >
-                Connect Wallet
-                </button>
-        <p className='text-2xl'>2/20 NFTs have been minted</p>
+        {renderButton()}
+       
+        <p className='text-2xl'>{tokenIdsMinted}/20 NFTs have been minted</p>
     </div>
     </main>
   )
