@@ -1,18 +1,155 @@
 import {useState, useEffect, useRef} from 'react';
 import Head from '../node_modules/next/head';
 import Web3Modal from 'web3modal';
-import { providers, Contract } from '../node_modules/ethers/lib/ethers';
+import { providers, Contract, utils, Signer } from '../node_modules/ethers/lib/ethers';
 import { KhaNFTContractAddress, KHANFTCONTRACTABI } from '../Constants/constants';
 import { toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 
 const KhaNFT = () => {
 
+    const [walletConnected, setWalletConnected] = useState <boolean> (false);
+    const [presaleStarted, setPresaleStarted] = useState  <boolean> (false);
+    const [presaleEnded, setPresaleEnded] = useState <boolean> (false);
+    const [loading, setLoading] = useState <boolean> (false);
+    const [owner, setOwner] = useState <boolean> (false);
+    const [tokenIdsMinted, setTokenIdsMinted] = useState <string> ("0");
+    const web3ModalRef = useRef<any>();
     
+    const getProviderOrSigner = async (needSigner = false): Promise <void> => {
+      const provider = await web3ModalRef.current.connect();
+      const web3Provider = new providers.Web3Provider(provider);
 
+      const { chainId } = await web3Provider.getNetwork();
+      if(chainId !== 80001) {
+        toast.warning("Change your network to Mumbai");
+        throw new Error("Change your network to Polygon Mumbai");
+      }
 
+      if(needSigner) {
+        const signer = web3Provider.getSigner();
+        return signer;
+      }
+      return web3Provider;
+    }
 
+    const presaleMint = async (): Promise <void> => {
+      try{
+        const signer = await getProviderOrSigner(true);
 
+        const whitelistContract = new Contract(
+          KhaNFTContractAddress,
+          KHANFTCONTRACTABI,
+          signer
+        );
+
+        const tx = await whitelistContract.presaleMint({
+          value: utils.parseEther("0.01")
+        })
+        setLoading(true);
+        await tx.wait();
+        setLoading(false);
+        toast.success("You successfully minted a KhaNFT during presaleMint!")
+      }
+      catch(err){
+        console.error(err);
+      }
+    }
+
+    const publicMint = async (): Promise <void> => {
+      try {
+      const signer = await getProviderOrSigner(true);
+      
+      const whitelistContract = new Contract(
+        KhaNFTContractAddress,
+        KHANFTCONTRACTABI,
+        signer
+      );
+
+      const tx = await whitelistContract.mint({
+        value: utils.parseEther("0.01")
+      });
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+      toast.success("You successfully minted a KhaNFT during public Mint!!!")
+      } 
+      catch (err) {
+        console.error(err)
+      }      
+    }
+
+    const connectWallet = async (): Promise <void> => {
+      try{
+        await getProviderOrSigner();
+        setWalletConnected(true);
+      }
+      catch(err){
+        console.error(err)
+      }
+    }
+
+    const startPresale = async (): Promise <void> => {
+      try {
+        const signer = await getProviderOrSigner(true);
+
+        const whitelistContract = new Contract(
+          KhaNFTContractAddress,
+          KHANFTCONTRACTABI,
+          signer
+        );
+
+        const tx = await whitelistContract.startPresale();
+        setLoading(true);
+        await tx.wait();
+        setLoading(false);
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    const getOwner = async ():Promise <void> => {
+      try {
+        const provider = await getProviderOrSigner();
+        const nftContract = new Contract(
+          KhaNFTContractAddress,
+          KHANFTCONTRACTABI,
+          provider
+          );
+
+          const _owner: string = await nftContract.owner();
+          const signer = await getProviderOrSigner(true);
+          const _address: string = signer.getAddress();
+          if (_address.toLowerCase() === _owner.toLowerCase()) {
+            setOwner(true);
+          }
+      }
+      catch (err) {
+        console.error(err)
+      }
+    }
+
+    const checkIfPresaleStarted = async (): Promise <boolean> => {
+      try {
+        const provider = await getProviderOrSigner();
+
+        const nftContract = new Contract(
+          KhaNFTContractAddress,
+          KHANFTCONTRACTABI,
+          provider
+        );
+
+        const _presaleStarted: boolean = await nftContract.presaleStarted();
+        if(!_presaleStarted) {
+          await getOwner();
+        }
+        setPresaleStarted(_presaleStarted);
+        return _presaleStarted;
+
+      } catch (err) {
+        console.error(err)
+      }
+    }
 
   return (
     <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]" >
