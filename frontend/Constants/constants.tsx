@@ -1,5 +1,5 @@
 export const WHITELIST_CONTRACT_ADDRESS: string = "0x35671efc68Fe0A36Af963813BFE9EE57C2A2cec4"
-export const KhaNFTContractAddress: string = "0x98A1558Df3B7c4C2b5F755afC2a4ae9bEd4C3099"
+export const KhaNFTContractAddress: string = "0x034ef0E9B4B05F39b00E3e031e0411686414D902"
 
 export const WHITELIST_CONTRACT_ABI = [
     {

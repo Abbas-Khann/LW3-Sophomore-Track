@@ -13,7 +13,7 @@ contract KhaNFT is ERC721Enumerable, Ownable {
 
     bool public _paused;
 
-    uint256 public maxTokenIds;
+    uint256 public maxTokenIds = 20;
 
     uint256 public tokenIds;
 

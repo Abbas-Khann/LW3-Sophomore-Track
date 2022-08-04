@@ -315,7 +315,7 @@ const KhaNFT = () => {
             Welcome to KhaNFT
         </h1>
         <p
-        className='text-2xl'
+        className='text-2xl text-center'
         >It's an NFT collection for Khans(giga Chads)</p>
         {renderButton()}
        
