@@ -125,7 +125,6 @@ const KhaNFT = () => {
           console.log("OwnerAddress new Variable:", ownerAddress);
           if (ownerAddress.toLowerCase() === _owner.toLowerCase()) {
             setOwner(true);
-            console.log('statement executed!')
           }
       }
       catch (err) {
