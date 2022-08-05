@@ -8,9 +8,56 @@ import {
      KHANFT_TOKEN_ADDRESS,
      KHANFT_TOKEN_CONTRACT_ABI
  } from '../Constants/constants';
+import { toast } from '../node_modules/react-toastify/dist/index';
 
 
 const ICO = () => {
+
+    const zero: number = BigNumber.from(0);
+
+    const [walletConnected, setWalletConnected] = useState <boolean> (false);
+
+    const [loading, setLoading] = useState <boolean> (false);
+
+    const [tokensToBeClaimed, setTokensToBeClaimed] = useState <number> (zero);
+    
+    const [balanceOfKhaNftTokens, setBalanceOfKhaNftTokens] = useState <number> (zero);
+
+    const [tokenAmount, setTokenAmount] = useState <number> (zero);
+
+    const [tokensMinted, setTokensMinted] = useState <number> (zero);
+
+    const [isOwner, setIsOwner] = useState <boolean> (false);
+
+    const web3ModalRef = useRef<any>();
+
+    const getProviderOrSigner = async (needSigner: boolean = false): Promise <any> => {
+        const provider = await web3ModalRef.current.connect();
+        const web3Provider = await providers.Web3Provider(provider);
+
+        const { chainId } = await web3Provider.getNetwork();
+
+        if (chainId !== 80001) {
+            toast.warning("Change your network to Mumbai!");
+            throw new Error ("Change your network to Polygon Testnet!");
+        }
+
+        if (needSigner) {
+            const signer = web3Provider.getSigner();
+            return signer;
+        }
+        return web3Provider;
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
