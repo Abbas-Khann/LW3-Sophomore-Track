@@ -21,7 +21,9 @@ const Home = () => {
           <Link href="/KhaNFT">
           <li className="list-disc cursor-pointer underline mb-2">NFT Collection</li>
           </Link>
+          <Link href="/ICO">
           <li className="list-disc cursor-pointer underline mb-2">ICO</li>
+          </Link>
           <li className="list-disc cursor-pointer underline mb-2">DAO</li>
           <li className="list-disc cursor-pointer underline mb-2">DeFi-Exchange</li>
         </ul>
