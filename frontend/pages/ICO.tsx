@@ -49,7 +49,47 @@ const ICO = () => {
         return web3Provider;
     }
 
+    const getTokensToBeClaimed = async (): Promise <void> => {
+        try {
+            const provider = await getProviderOrSigner();
 
+            const nftContract = new Contract(
+                KhaNFTContractAddress,
+                KHANFTCONTRACTABI,
+                provider
+            );
+
+            const tokenContract = new Contract(
+                KhaNFTContractAddress,
+                KHANFTCONTRACTABI,
+                provider
+            );
+
+            const signer: any = await getProviderOrSigner(true);
+            const address: string = await signer.getAddress();
+            const balance: number = await nftContract.balanceOf(address);
+            
+            if (balance === zero) {
+                setTokensMinted(zero);
+            }
+            else {
+                let amount = 0;
+
+                for(let i: number = 0; i < balance; i++) {
+                    const tokenId: number = await nftContract.tokenOfOwnerByIndex(address, i);
+                    const claimed: boolean = await tokenContract.tokenIdsClaimed(tokenId);
+                    if(!claimed) {
+                        amount++;
+                    }
+                }
+                setTokensToBeClaimed(BigNumber.from(amount));
+            }
+            
+        } 
+        catch (err) {
+            console.error(err)
+        }
+    }
 
 
 
