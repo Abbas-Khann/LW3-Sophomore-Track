@@ -29,6 +29,7 @@ const ICO = () => {
             Initial Coin Offering
         </h1>
         {/* {renderButton()} */}
+        <p className='text-3xl'>You can claim or mint KhaNFT Tokens here!</p>
 
     </div>
     </main>
