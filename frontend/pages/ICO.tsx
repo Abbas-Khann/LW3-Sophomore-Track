@@ -50,172 +50,169 @@ const ICO = () => {
         return web3Provider;
     }      
 
-    const mintKhaNFTtoken = async(amount: number): Promise <void> => {
-        try {
-            const signer: any = await getProviderOrSigner(true);
-            
-            const tokenContract = new Contract(
-                KHANFT_TOKEN_ADDRESS,
-                KHANFT_TOKEN_CONTRACT_ABI,
-                signer
-            );
+  const mintKhaNFTtoken = async (amount: number): Promise<void> => {
+    try {
+      const signer: any = await getProviderOrSigner(true);
 
-            const value: number = 0.001 * amount;
+      const tokenContract = new Contract(
+        KHANFT_TOKEN_ADDRESS,
+        KHANFT_TOKEN_CONTRACT_ABI,
+        signer
+      );
 
-            const tx = await tokenContract.mint(amount, {
-                value: utils.parseEther(value.toString()),
-            })
+      const value: number = 0.001 * amount;
 
-            setLoading(true);
-            await tx.wait();
-            setLoading(false);
-            toast.success("Successfully minted a KhaNFT Token");
-            await getBalanceOfKhaNFTtoken();
-        } 
-        catch (err) {
-            console.error(err)    
-        }
+      const tx = await tokenContract.mint(amount, {
+        value: utils.parseEther(value.toString()),
+      });
+
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+      toast.success("Successfully minted a KhaNFT Token");
+      await getBalanceOfKhaNFTtoken();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getBalanceOfKhaNFTtoken = async (): Promise<void> => {
+    try {
+      const provider: any = await getProviderOrSigner(false);
+
+      const tokenContract = new Contract(
+        KHANFT_TOKEN_ADDRESS,
+        KHANFT_TOKEN_CONTRACT_ABI,
+        provider
+      );
+
+      const signer: any = await getProviderOrSigner(true);
+
+      const _address: string = await signer.getAddress();
+
+      const balance: number = await tokenContract.balanceOf(_address);
+      setBalanceOfKhaNftTokens(balance);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const connectWallet = async (): Promise<void> => {
+    try {
+      await getProviderOrSigner();
+      setWalletConnected(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (!walletConnected) {
+      web3ModalRef.current = new Web3Modal({
+        network: "mumbai",
+        providerOptions: {},
+        disableInjectedProvider: false,
+      });
+      connectWallet();
+      getBalanceOfKhaNFTtoken();
+    }
+  }, [walletConnected]);
+
+  const renderButton = (): JSX.Element => {
+    if (loading) {
+      return (
+        <div>
+          <button className="border-2 transition duration-300 ease-out motion-safe:animate-spin hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3">
+            Loading...
+          </button>
+        </div>
+      );
+    }
+    if (walletConnected && isOwner) {
+      return (
+        <div>
+          <button className="border-2 transition duration-300 ease-out motion-safe:animate-bounce hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3">
+            Withdraw Coins
+          </button>
+        </div>
+      );
+    }
+    if (tokensToBeClaimed > 0) {
+      return (
+        <div>
+          <p className="text-2xl my-2">
+            {tokensToBeClaimed * 10} Tokens can be claimed{" "}
+          </p>
+          <button className="border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3">
+            Claim Tokens
+          </button>
+        </div>
+      );
     }
 
-    const getBalanceOfKhaNFTtoken = async (): Promise <void> => {
-        try {
-            const provider: any = await getProviderOrSigner(false);
-
-            const tokenContract = new Contract(
-                KHANFT_TOKEN_ADDRESS,
-                KHANFT_TOKEN_CONTRACT_ABI,
-                provider
-            )
-
-            const signer: any = await getProviderOrSigner(true);
-
-            const _address: string = await signer.getAddress();
-
-            const balance: number = await tokenContract.balanceOf(_address);
-            setBalanceOfKhaNftTokens(balance)
-        }   
-        catch (err) {
-            console.error(err)    
-        }
-    }
-
-    const connectWallet = async (): Promise <void> => {
-        try {
-            await getProviderOrSigner();
-            setWalletConnected(true);
-        } catch (err) {
-            console.error(err)
-        }
-    }
-
-
-
-    useEffect(() => {
-        if(!walletConnected) {
-            web3ModalRef.current = new Web3Modal({
-                network: "mumbai",
-                providerOptions: {},
-                disableInjectedProvider: false
-            });
-            connectWallet();
-            getBalanceOfKhaNFTtoken();
-        }
-    }, [walletConnected])
-
-    const renderButton = (): JSX.Element => {
-        if(loading) {
-            return <div>
-                <button 
-                className='border-2 transition duration-300 ease-out motion-safe:animate-spin hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
-                >Loading...</button>
-            </div>
-        }
-        if(walletConnected && isOwner) {
-            return(
-                <div>
-                    <button
-                    className='border-2 transition duration-300 ease-out motion-safe:animate-bounce hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
-                    >
-                        Withdraw Coins
-                    </button>
-                </div>
-            )
-        }
-        if(tokensToBeClaimed > 0) {
-            return(
-                <div>
-                    <p className='text-2xl my-2'>{tokensToBeClaimed * 10} Tokens can be claimed </p>
-                    <button
-                    className='border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
-                    >
-                    Claim Tokens
-                    </button>
-                </div>
-            )
-        }
-
-        return (
-            <div>
-                <div>
-                    <input 
-                    className='p-2 text-black'
-                    type="number"
-                    placeholder="Amount of tokens"
-                    onChange={(e) => setTokenAmount(BigNumber.from(e.target.value))}
-                    />
-                    <button
-                    className='p-2 bg-purple-500 cursor-pointer '
-                    disabled={!(tokenAmount > 0)}
-                    onClick={() => mintKhaNFTtoken(tokenAmount)}
-                    >
-                        Mint Tokens
-                    </button>
-                </div>
-            </div>
-        )
-
-    }
-
+    return (
+      <div>
+        <div>
+          <input
+            className="p-2 text-black"
+            type="number"
+            placeholder="Amount of tokens"
+            onChange={(e) => setTokenAmount(BigNumber.from(e.target.value))}
+          />
+          <button
+            className="p-2 bg-purple-500 cursor-pointer "
+            disabled={!(tokenAmount > 0)}
+            onClick={() => mintKhaNFTtoken(tokenAmount)}
+          >
+            Mint Tokens
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]" >
-        <Head>
+    <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]">
+      <Head>
         <title>LW3 Sophomore Dapps</title>
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,700;1,400&display=swap');
+          @import
+          url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,700;1,400&display=swap');
         </style>
       </Head>
-      <div className='flex flex-col items-center h-96 justify-center'>
-        <h1 className='text-5xl text-center py-4 text-white'>
-            Welcome to KhaNFT ICO!!!
+      <div className="flex flex-col items-center h-96 justify-center">
+        <h1 className="text-5xl text-center py-4 text-white">
+          Welcome to KhaNFT ICO!!!
         </h1>
-        <p className='text-3xl text-center'>You can claim or mint KhaNFT Tokens here!</p>
+        <p className="text-3xl text-center">
+          You can claim or mint KhaNFT Tokens here!
+        </p>
         <div>
-            {walletConnected ? (
-                <div className='px-4 text-white text-center'>
-                    <p className='text-2xl my-2'>
-                        You have minted {utils.formatEther(balanceOfKhaNftTokens)} KhaNFT tokens
-                    </p>
-                <p className='text-2xl my-2'>
-                    Overall {utils.formatEther(tokensMinted)}/10000 have been minted
-                </p>
-                {renderButton()}    
-                </div>
-            ):
+          {walletConnected ? (
+            <div className="px-4 text-white text-center">
+              <p className="text-2xl my-2">
+                You have minted {utils.formatEther(balanceOfKhaNftTokens)}{" "}
+                KhaNFT tokens
+              </p>
+              <p className="text-2xl my-2">
+                Overall {utils.formatEther(tokensMinted)}/10000 have been minted
+              </p>
+              {renderButton()}
+            </div>
+          ) : (
             <button
-            className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-3'
-            onClick={connectWallet}
+              className="border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-3"
+              onClick={connectWallet}
             >
-            Connect Wallet
+              Connect Wallet
             </button>
-        }
+          )}
         </div>
-
-    </div>
+      </div>
     </main>
-  )
-}
+  );
+};
 
-export default ICO
+export default ICO;
