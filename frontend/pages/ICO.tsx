@@ -92,6 +92,32 @@ const ICO = () => {
         }
     }
 
+    const mintKhaNFTtoken = async(amount: number): Promise <void> => {
+        try {
+            const signer: any = await getProviderOrSigner(true);
+            
+            const tokenContract = new Contract(
+                KHANFT_TOKEN_ADDRESS,
+                KHANFTCONTRACTABI,
+                signer
+            );
+
+            const value: BigNumber = 0.001 * amount;
+
+            const tx = await tokenContract.mint(amount, {
+                value: utils.parseEther(value)
+            })
+
+            setLoading(true);
+            await tx.wait();
+            setLoading(false);
+            toast.success("Successfully minted a KhaNFT Token");
+        } 
+        catch (err) {
+            console.error(err)    
+        }
+    }
+
     const connectWallet = async (): Promise <void> => {
         try {
             await getProviderOrSigner();
@@ -154,11 +180,12 @@ const ICO = () => {
                     className='p-2 text-black'
                     type="number"
                     placeholder="Amount of tokens"
-
+                    onChange={(e) => setTokenAmount(BigNumber.from(e.target.value))}
                     />
                     <button
                     className='p-2 bg-purple-500 cursor-pointer '
                     disabled={!(tokenAmount > 0)}
+                    onClick={() => mintKhaNFTtoken(tokenAmount)}
                     >
                         Mint Tokens
                     </button>
