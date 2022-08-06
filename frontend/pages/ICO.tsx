@@ -115,6 +115,59 @@ const ICO = () => {
         }
     }, [walletConnected])
 
+    const renderButton = (): JSX.Element => {
+        if(loading) {
+            return <div>
+                <button 
+                className='border-2 transition duration-300 ease-out motion-safe:animate-spin hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
+                >Loading...</button>
+            </div>
+        }
+        if(walletConnected && isOwner) {
+            return(
+                <div>
+                    <button
+                    className='border-2 transition duration-300 ease-out motion-safe:animate-bounce hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
+                    >
+                        Withdraw Coins
+                    </button>
+                </div>
+            )
+        }
+        if(tokensToBeClaimed > 0) {
+            return(
+                <div>
+                    <p className='text-2xl my-2'>22 Tokens can be claimed </p>
+                    <button
+                    className='border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3'
+                    >
+                    Claim Tokens
+                    </button>
+                </div>
+            )
+        }
+
+        return (
+            <div>
+                <div>
+                    <input 
+                    className='p-2 text-black'
+                    type="number"
+                    placeholder="Amount of tokens"
+
+                    />
+                    <button
+                    className='p-2 bg-purple-500 cursor-pointer '
+                    disabled={!(tokenAmount > 0)}
+                    >
+                        Mint Tokens
+                    </button>
+                </div>
+            </div>
+        )
+
+    }
+
 
   return (
     <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]" >
@@ -133,14 +186,14 @@ const ICO = () => {
         <p className='text-3xl text-center'>You can claim or mint KhaNFT Tokens here!</p>
         <div>
             {walletConnected ? (
-                <div>
+                <div className='px-4 text-white text-center'>
                     <p className='text-2xl my-2'>
                         You have minted 15 KhaNFT tokens
                     </p>
-                <p className='text-2xl mt-2'>
+                <p className='text-2xl my-2'>
                     Overall 20/1000 have been minted
                 </p>
-                {/* {renderButton()} */}    
+                {renderButton()}    
                 </div>
             ):
             <button
