@@ -134,10 +134,10 @@ const ICO = () => {
         <div>
             {walletConnected ? (
                 <div>
-                    <p>
+                    <p className='text-2xl my-2'>
                         You have minted 15 KhaNFT tokens
                     </p>
-                <p>
+                <p className='text-2xl mt-2'>
                     Overall 20/1000 have been minted
                 </p>
                 {/* {renderButton()} */}    
@@ -145,6 +145,7 @@ const ICO = () => {
             ):
             <button
             className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-3'
+            onClick={connectWallet}
             >
             Connect Wallet
             </button>
