@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import Head from '../node_modules/next/head';
-import { BigNumber, Contract, providers, utils } from '../node_modules/ethers/lib/ethers';
+import { BigNumber, Contract, providers, utils } from 'ethers';
 import Web3Modal from 'web3modal';
 import { 
      KhaNFTContractAddress,
@@ -8,7 +8,8 @@ import {
      KHANFT_TOKEN_ADDRESS,
      KHANFT_TOKEN_CONTRACT_ABI
  } from '../Constants/constants';
-import { toast } from '../node_modules/react-toastify/dist/index';
+import { toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 
 const ICO = () => {
@@ -33,7 +34,7 @@ const ICO = () => {
 
     const getProviderOrSigner = async (needSigner: boolean = false): Promise <any> => {
         const provider = await web3ModalRef.current.connect();
-        const web3Provider = await providers.Web3Provider(provider);
+        const web3Provider = new providers.Web3Provider(provider);
 
         const { chainId } = await web3Provider.getNetwork();
 
@@ -115,11 +116,6 @@ const ICO = () => {
     }, [walletConnected])
 
 
-
-
-
-
-
   return (
     <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]" >
         <Head>
@@ -134,8 +130,26 @@ const ICO = () => {
         <h1 className='text-5xl text-center py-4 text-white'>
             Welcome to KhaNFT ICO!!!
         </h1>
-        {/* {renderButton()} */}
-        <p className='text-3xl'>You can claim or mint KhaNFT Tokens here!</p>
+        <p className='text-3xl text-center'>You can claim or mint KhaNFT Tokens here!</p>
+        <div>
+            {walletConnected ? (
+                <div>
+                    <p>
+                        You have minted 15 KhaNFT tokens
+                    </p>
+                <p>
+                    Overall 20/1000 have been minted
+                </p>
+                {/* {renderButton()} */}    
+                </div>
+            ):
+            <button
+            className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white my-3'
+            >
+            Connect Wallet
+            </button>
+        }
+        </div>
 
     </div>
     </main>
