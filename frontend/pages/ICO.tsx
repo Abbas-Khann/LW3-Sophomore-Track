@@ -91,9 +91,28 @@ const ICO = () => {
         }
     }
 
+    const connectWallet = async (): Promise <void> => {
+        try {
+            await getProviderOrSigner();
+            setWalletConnected(true);
+        } catch (err) {
+            console.error(err)
+        }
+    }
 
 
 
+    useEffect(() => {
+        if(!walletConnected) {
+            web3ModalRef.current = new Web3Modal({
+                network: "mumbai",
+                providerOptions: {},
+                disableInjectedProvider: false
+            });
+            connectWallet();
+
+        }
+    }, [walletConnected])
 
 
 
@@ -113,7 +132,7 @@ const ICO = () => {
       </Head>
       <div className='flex flex-col items-center h-96 justify-center'>
         <h1 className='text-5xl text-center py-4 text-white'>
-            Initial Coin Offering
+            Welcome to KhaNFT ICO!!!
         </h1>
         {/* {renderButton()} */}
         <p className='text-3xl'>You can claim or mint KhaNFT Tokens here!</p>
