@@ -98,14 +98,14 @@ const ICO = () => {
             
             const tokenContract = new Contract(
                 KHANFT_TOKEN_ADDRESS,
-                KHANFTCONTRACTABI,
+                KHANFT_TOKEN_CONTRACT_ABI,
                 signer
             );
 
-            const value: BigNumber = 0.001 * amount;
+            const value: number = 0.001 * amount;
 
             const tx = await tokenContract.mint(amount, {
-                value: utils.parseEther(value)
+                value: utils.parseEther(value.toString()),
             })
 
             setLoading(true);
