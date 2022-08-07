@@ -1,6 +1,6 @@
-const { ethers } = require("hardhat")
+// const { ethers } = require("hardhat")
 require("dotenv").config({ path: "../.env" });
-const { NFT_CONTRACT_ADDRESS } = require("../Constants/constants");
+// const { NFT_CONTRACT_ADDRESS } = require("../Constants/constants");
 
 const Mainn = async (): Promise <any> => {
     const KhaNFTContract =  NFT_CONTRACT_ADDRESS;
