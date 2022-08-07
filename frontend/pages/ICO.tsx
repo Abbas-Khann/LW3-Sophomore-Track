@@ -72,6 +72,7 @@ const ICO = () => {
       toast.success("Successfully minted a KhaNFT Token");
       await getBalanceOfKhaNFTtoken();
       await getTotalNumberOfTokensMinted();
+      await getTokensToBeClaimed();
     } catch (err) {
       console.error(err);
     }
@@ -116,6 +117,70 @@ const ICO = () => {
     }
   }
 
+  const getTokensToBeClaimed = async (): Promise <void> => {
+    try {
+      const provider: any = await getProviderOrSigner(false);
+
+      const tokenContract = new Contract(
+        KHANFT_TOKEN_ADDRESS,
+        KHANFT_TOKEN_CONTRACT_ABI,
+        provider
+      )
+
+      const nftContract = new Contract(
+        KhaNFTContractAddress,
+        KHANFTCONTRACTABI,
+        provider
+      );
+      
+      const signer: any = await getProviderOrSigner(true);
+
+      const address: string = await signer.getAddress();
+
+      const balance: number = await nftContract.balanceOf(address);
+
+      if(balance === zero) {
+        setTokensToBeClaimed(zero);
+      }
+      else {
+        let amount: number = 0;
+
+        for(let i: number = 0; i < balance; i++) {
+          const tokenId: number = await nftContract.tokenOfOwnerByIndex(address, i);
+          const claimed: boolean = await tokenContract.tokenIdsClaimed(tokenId);
+          if(!claimed) {
+            amount++;
+          }
+        }
+        setTokensToBeClaimed(BigNumber.from(amount));
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const claimTokens = async (): Promise <void> => {
+    try {
+      const signer: any = await getProviderOrSigner(true);
+
+      const tokenContract = new Contract(
+        KHANFT_TOKEN_ADDRESS,
+        KHANFT_TOKEN_CONTRACT_ABI,
+        signer
+      )
+
+      const tx: any = await tokenContract.claim();
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+      toast.success("Successfully claimed KhaNFT Token!!!");
+      getTokensToBeClaimed();
+      // function calls
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   const connectWallet = async (): Promise<void> => {
     try {
       await getProviderOrSigner();
@@ -134,9 +199,11 @@ const ICO = () => {
         providerOptions: {},
         disableInjectedProvider: false,
       });
+      console.log(tokensToBeClaimed)
       connectWallet();
       getBalanceOfKhaNFTtoken();
       getTotalNumberOfTokensMinted();
+      getTokensToBeClaimed();
     }
   }, [walletConnected]);
 
@@ -165,7 +232,9 @@ const ICO = () => {
           <p className="text-2xl my-2">
             {tokensToBeClaimed * 10} Tokens can be claimed{" "}
           </p>
-          <button className="border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3">
+          <button className="border-2 transition duration-300 motion-safe:animate-bounce ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3"
+          onClick={claimTokens}
+          >
             Claim Tokens
           </button>
         </div>
@@ -215,7 +284,7 @@ const ICO = () => {
           {walletConnected ? (
             <div className="px-4 text-white text-center">
               <p className="text-2xl my-2">
-                You have minted {utils.formatEther(balanceOfKhaNftTokens)}{" "}
+                You have minted {utils.formatEther(balanceOfKhaNftTokens)}
                 KhaNFT tokens
               </p>
               <p className="text-2xl my-2">
