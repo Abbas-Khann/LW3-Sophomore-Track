@@ -206,7 +206,27 @@ const ICO = () => {
     }
   }
 
-  const connectWallet = async (): Promise<void> => {
+  const withdrawCoins = async (): Promise <void> => {
+    try {
+      const signer: any = await getProviderOrSigner(true);
+
+      const tokenContract =  new Contract(
+        KHANFT_TOKEN_ADDRESS,
+        KHANFT_TOKEN_CONTRACT_ABI,
+        signer
+      );
+
+      const tx = await tokenContract.withdraw();
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+      await getOwner();
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const connectWallet = async (): Promise <void> => {
     try {
       await getProviderOrSigner();
       setWalletConnected(true);
