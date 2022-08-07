@@ -33,8 +33,8 @@ const ICO = () => {
     const web3ModalRef = useRef<any>();
 
     const getProviderOrSigner = async (needSigner: boolean = false): Promise <any> => {
-        const provider = await web3ModalRef.current.connect();
-        const web3Provider = new providers.Web3Provider(provider);
+        const provider: any = await web3ModalRef.current.connect();
+        const web3Provider: any = new providers.Web3Provider(provider);
 
         const { chainId } = await web3Provider.getNetwork();
 
@@ -210,7 +210,7 @@ const ICO = () => {
     try {
       const signer: any = await getProviderOrSigner(true);
 
-      const tokenContract =  new Contract(
+      const tokenContract: Contract =  new Contract(
         KHANFT_TOKEN_ADDRESS,
         KHANFT_TOKEN_CONTRACT_ABI,
         signer
