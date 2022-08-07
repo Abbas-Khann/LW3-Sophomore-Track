@@ -181,6 +181,31 @@ const ICO = () => {
     }
   }
 
+  const getOwner = async (): Promise <void> => {
+    try {
+        const provider: any = await getProviderOrSigner();
+        
+        const nftContract = new Contract(
+          KHANFT_TOKEN_ADDRESS,
+          KHANFT_TOKEN_CONTRACT_ABI,
+          provider
+        );
+
+        const _owner: string = await nftContract.owner();
+
+        const signer: any = await getProviderOrSigner(true);
+
+        const address: string = await signer.getAddress();
+
+        if(address.toLowerCase() === _owner.toLowerCase()) {
+          setIsOwner(true);
+          console.log("owner fetched")
+        }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   const connectWallet = async (): Promise<void> => {
     try {
       await getProviderOrSigner();
