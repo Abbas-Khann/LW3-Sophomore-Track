@@ -221,6 +221,7 @@ const ICO = () => {
       await tx.wait();
       setLoading(false);
       await getOwner();
+      toast.success("You successfully withdrew your coins!")
     } catch (err) {
       console.error(err)
     }
@@ -249,6 +250,7 @@ const ICO = () => {
       getBalanceOfKhaNFTtoken();
       getTotalNumberOfTokensMinted();
       getTokensToBeClaimed();
+      withdrawCoins();
     }
   }, [walletConnected]);
 
@@ -265,7 +267,9 @@ const ICO = () => {
     if (walletConnected && isOwner) {
       return (
         <div>
-          <button className="border-2 transition duration-300 ease-out motion-safe:animate-bounce hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3">
+          <button className="border-2 transition duration-300 ease-out motion-safe:animate-bounce hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mb-3"
+          onClick={withdrawCoins}
+          >
             Withdraw Coins
           </button>
         </div>
