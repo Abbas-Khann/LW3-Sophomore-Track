@@ -71,6 +71,7 @@ const ICO = () => {
       setLoading(false);
       toast.success("Successfully minted a KhaNFT Token");
       await getBalanceOfKhaNFTtoken();
+      await getTotalNumberOfTokensMinted();
     } catch (err) {
       console.error(err);
     }
@@ -97,10 +98,30 @@ const ICO = () => {
     }
   };
 
+  const getTotalNumberOfTokensMinted = async (): Promise <void> => {
+    try {
+      const provider: any = await getProviderOrSigner(false);
+
+      const tokenContract = new Contract(
+        KHANFT_TOKEN_ADDRESS,
+        KHANFT_TOKEN_CONTRACT_ABI,
+        provider
+      )
+
+      const _tokensMinted: number = await tokenContract.totalSupply();
+      setTokensMinted(_tokensMinted);
+
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   const connectWallet = async (): Promise<void> => {
     try {
       await getProviderOrSigner();
       setWalletConnected(true);
+      await getBalanceOfKhaNFTtoken();
+      await getTotalNumberOfTokensMinted();
     } catch (err) {
       console.error(err);
     }
@@ -115,6 +136,7 @@ const ICO = () => {
       });
       connectWallet();
       getBalanceOfKhaNFTtoken();
+      getTotalNumberOfTokensMinted();
     }
   }, [walletConnected]);
 
