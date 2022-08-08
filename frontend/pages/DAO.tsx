@@ -22,6 +22,7 @@ const DAO = (): JSX.Element => {
   const [proposals, setProposals] = useState([]);
   const web3modalRef = useRef<any>();
 
+  console.table(proposals)
   
   const getProviderOrSigner = async (needSigner: boolean = false): Promise <void> => {
     const provider = await web3modalRef.current.connect();
@@ -112,6 +113,8 @@ const DAO = (): JSX.Element => {
       const txn = await contract.createProposal(fakeNftTokenId);
       setLoading(true);
       await txn.wait();
+      await getNumProposalsInDAO();
+      toast.success("Proposal Created!!!")
       setLoading(false)
     } catch (err) {
       console.error(err)
@@ -144,9 +147,10 @@ const DAO = (): JSX.Element => {
       for(let i:number = 0; i < parseInt(numProposals); i++) {
         const proposal = await fetchProposalById(i);
         proposals.push(proposal);
-        console.log(proposals)
+        console.log("proposals inside loop", proposals)
       }
       setProposals(proposals)
+      console.log("proposals inside the function: ",proposals )
       return proposals;
     } catch (err) {
       console.error(err)
@@ -193,14 +197,15 @@ const DAO = (): JSX.Element => {
       });
       connectWallet().then(() => {
         getDAOTreasuryBalance();
-        getNumProposalsInDAO();
         getUserNFTBalance();
+        getNumProposalsInDAO();
       })
     }
   }, [walletConnected])
 
   useEffect(() => {
     if(selectedTab === "View Proposals") {
+      console.log("Effect and condition executed!")
       fetchAllProposals();
     }
   }, [selectedTab])
@@ -209,7 +214,7 @@ const DAO = (): JSX.Element => {
     if(selectedTab === "Create Proposal") {
       return renderCreateProposalsTab()
     }
-    else if(selectedTab === "View Proposal") {
+    else if(selectedTab === "View Proposals") {
       return renderViewProposalsTab();
     }
     return null;
@@ -255,6 +260,7 @@ const DAO = (): JSX.Element => {
         >
         <button
         className='border-2 transition duration-300 ease-out hover:ease-in hover:bg-purple-800 text-3xl rounded px-3 py-2 hover:text-white mt-4'
+        onClick={createProposal}
         >
           Create 
         </button>
@@ -302,11 +308,12 @@ const DAO = (): JSX.Element => {
               >
               <button
               onClick={() => voteOnProposal(p.proposalId, "YAY")}
+              className="bg-blue-400 rounded p-1"
               >
                 Vote YAY
               </button>
               <button
-              className=''
+              className='bg-cyan-400 rounded p-1 ml-1'
               onClick={() => voteOnProposal(p.proposalId, "NAY")}
               >
                 Vote NAY
@@ -316,7 +323,7 @@ const DAO = (): JSX.Element => {
             p.deadline.getTime() < Date.now() && !p.executed ? (
               <div>
                 <button
-                className=''
+                className='bg-pink-400 rounded text-white py-2'
                 onClick={() => executeProposal(p.proposalId)}
                 >
                   Execute Proposal {" "}
@@ -348,14 +355,14 @@ const DAO = (): JSX.Element => {
           url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,700;1,400&display=swap');
         </style>
       </Head>
-      <div className='flex flex-col items-center justify-center h-96'>
+      <div className='flex flex-col items-center justify-center h-screen'>
         <h1 className='text-4xl text-black'>Welcome to the DAO</h1>
         <div className='text-2xl text-center my-2 text-white'>
           Your KhaNFT Balance: {nftBalance}
           <br />
           Treasury Balance: {formatEther(treasuryBalance)} ETH
           <br />
-          Total Number of Proposals: {formatEther(numProposals)}
+          Total Number of Proposals: {Math.ceil(formatEther(numProposals))}
         </div>
         <div>
           <button className='p-2 rounded bg-indigo-500 text-white hover:bg-indigo-400'
@@ -364,7 +371,7 @@ const DAO = (): JSX.Element => {
             Create Proposal
           </button>
           <button className='p-2 rounded bg-cyan-300 text-black hover:bg-cyan-200 ml-2'
-          onClick={()=> setSelectedTab("View Proposal")}
+          onClick={()=> setSelectedTab("View Proposals")}
           >
             View Proposals
           </button>
