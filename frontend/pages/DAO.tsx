@@ -18,6 +18,7 @@ const DAO = (): JSX.Element => {
 
   const [numProposals, setNumProposals] = useState <string> ("0");
 
+  const [nftBalance, setNftBalance] = useState <number> (0);
 
 
 
@@ -43,6 +44,15 @@ const DAO = (): JSX.Element => {
     return web3Provider;
   }
   
+  const connectWallet = async (): Promise <void> => {
+    try {
+        await getProviderOrSigner();
+        setWalletConnected(true);
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   const getDAOContractInstance = (providerOrSigner): void => {
     return new Contract(
       DAO_CONTRACT_ADDRESS,
@@ -59,11 +69,15 @@ const DAO = (): JSX.Element => {
     );
   }
 
-
-  const connectWallet = async (): Promise <void> => {
+  console.log(nftBalance)
+  const getUserNFTBalance = async (): Promise <void> => {
     try {
-        await getProviderOrSigner();
-        setWalletConnected(true);
+      const signer: any = await getProviderOrSigner(true);
+      const nftContract: Contract = getNFTContractInstance(signer);
+
+      const balance: number = await nftContract.balanceOf(signer.getAddress());
+      setNftBalance(parseInt(balance.toString()));
+
     } catch (err) {
       console.error(err)
     }
@@ -108,6 +122,7 @@ const DAO = (): JSX.Element => {
       connectWallet().then(() => {
         getDAOTreasuryBalance();
         getNumProposalsInDAO();
+        getUserNFTBalance();
       })
     }
   }, [walletConnected])
@@ -126,7 +141,7 @@ const DAO = (): JSX.Element => {
       <div className='flex flex-col items-center justify-center h-96'>
         <h1 className='text-4xl text-black'>Welcome to the DAO</h1>
         <div className='text-2xl text-center my-2 text-white'>
-          Your KhaNFT Balance: 1
+          Your KhaNFT Balance: {nftBalance}
           <br />
           Treasury Balance: {formatEther(treasuryBalance)} ETH
           <br />
