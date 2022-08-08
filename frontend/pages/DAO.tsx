@@ -10,7 +10,7 @@ import { KhaNFTContractAddress,
         } from '../Constants/constants';
 import { toast } from 'react-toastify';
 
-const DAO = () => {
+const DAO = (): JSX.Element => {
 
   const [walletConnected, setWalletConnected] = useState <boolean> (false);
   const web3modalRef = useRef<any>();
@@ -64,7 +64,25 @@ const DAO = () => {
           url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,700;1,400&display=swap');
         </style>
       </Head>
-
+      <div className='flex flex-col items-center justify-center h-96'>
+        <h1 className='text-4xl text-white'>Welcome to the DAO</h1>
+        <div className='text-2xl text-center my-2'>
+          Your KhaNFT Balance: 1
+          <br />
+          Treasury Balance: 2
+          <br />
+          Total Number of Proposals: 2
+        </div>
+        <div>
+          <button className='p-2 rounded bg-indigo-500 text-white hover:bg-indigo-400'>
+            Create Proposal
+          </button>
+          <button className='p-2 rounded bg-cyan-300 text-black hover:bg-cyan-200 ml-2'>
+            View Proposals
+          </button>
+        </div>
+        {/* {renderTabs()} */}
+      </div>
 
       </main>
   )
