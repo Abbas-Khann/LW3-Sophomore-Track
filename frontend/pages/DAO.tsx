@@ -8,10 +8,50 @@ import { KhaNFTContractAddress,
          DAO_CONTRACT_ADDRESS,
          DAO_CONTRACT_ABI
         } from '../Constants/constants';
+import { toast } from 'react-toastify';
 
 const DAO = () => {
 
+  const [walletConnected, setWalletConnected] = useState <boolean> (false);
+  const web3modalRef = useRef<any>();
 
+  const getProviderOrSigner = async (needSigner: boolean = false): Promise <void> => {
+    const provider = await web3modalRef.current.connect();
+    const web3Provider = new providers.Web3provider(provider);
+
+    const { chainId } = await web3Provider.getNetwork();
+
+    if(chainId !== 80001) {
+      toast.warning("Change your network to Mumbai");
+      throw new Error("Change your network to Polygon Mumbai");
+    }
+
+    if(needSigner) {
+      const signer = web3Provider.getSigner();
+      return signer;
+    }
+    return web3Provider;
+  }
+
+  const connectWallet = async (): Promise <void> => {
+    try {
+        await getProviderOrSigner();
+        setWalletConnected(true);
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  useEffect(() => {
+    if(!walletConnected) {
+      web3modalRef.current = new Web3Modal({
+        network: "mumbai",
+        providerOptions: {},
+        disableInjectedProvider: false
+      });
+      connectWallet();
+    }
+  }, [walletConnected])
 
   return (
     <main className="h-screen bg-cover bg-[url('/img/ethereum.jpeg')]">
