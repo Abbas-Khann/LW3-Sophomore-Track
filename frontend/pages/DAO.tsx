@@ -50,7 +50,7 @@ const DAO = (): JSX.Element => {
       providerOrSigner
     );
   }
-  
+
   const getNFTContractInstance = (providerOrSigner): void => {
     return new Contract(
       KhaNFTContractAddress,
@@ -87,7 +87,10 @@ const DAO = (): JSX.Element => {
     try {
       const provider = await getProviderOrSigner(false);
 
-      
+      const contract: Contract = getDAOContractInstance(provider);
+      const daoNumProposals: string = await contract.numProposals();
+      setNumProposals(daoNumProposals.toString());
+      console.log("function called", numProposals)
     } catch (err) {
       console.error(err);
     }
@@ -104,6 +107,7 @@ const DAO = (): JSX.Element => {
       });
       connectWallet().then(() => {
         getDAOTreasuryBalance();
+        getNumProposalsInDAO();
       })
     }
   }, [walletConnected])
@@ -126,7 +130,7 @@ const DAO = (): JSX.Element => {
           <br />
           Treasury Balance: {formatEther(treasuryBalance)} ETH
           <br />
-          Total Number of Proposals: 2
+          Total Number of Proposals: {formatEther(numProposals)}
         </div>
         <div>
           <button className='p-2 rounded bg-indigo-500 text-white hover:bg-indigo-400'>
