@@ -69,7 +69,6 @@ const DAO = (): JSX.Element => {
     );
   }
 
-  console.log(nftBalance)
   const getUserNFTBalance = async (): Promise <void> => {
     try {
       const signer: any = await getProviderOrSigner(true);
@@ -104,7 +103,6 @@ const DAO = (): JSX.Element => {
       const contract: Contract = getDAOContractInstance(provider);
       const daoNumProposals: string = await contract.numProposals();
       setNumProposals(daoNumProposals.toString());
-      console.log("function called", numProposals)
     } catch (err) {
       console.error(err);
     }
