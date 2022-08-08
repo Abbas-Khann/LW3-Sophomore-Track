@@ -1,8 +1,15 @@
-import React from 'react'
-import Head from '../node_modules/next/head'
+import {useEffect, useState, useRef} from 'react';
+import Head from '../node_modules/next/head';
+import { Contract, providers } from 'ethers';
+import { formatEther } from '../node_modules/ethers/lib/utils';
+import Web3Modal from 'web3modal';
+import { KhaNFTContractAddress,
+         KHANFTCONTRACTABI,
+         DAO_CONTRACT_ADDRESS,
+         DAO_CONTRACT_ABI
+        } from '../Constants/constants';
 
 const DAO = () => {
-
 
 
 
@@ -18,7 +25,7 @@ const DAO = () => {
         </style>
       </Head>
 
-        
+
       </main>
   )
 }
