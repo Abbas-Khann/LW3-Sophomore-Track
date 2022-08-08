@@ -13,11 +13,16 @@ import { toast } from 'react-toastify';
 const DAO = (): JSX.Element => {
 
   const [walletConnected, setWalletConnected] = useState <boolean> (false);
+
+  const [treasuryBalance, setTreasuryBalance] = useState <string> ("0");
+
+
+
   const web3modalRef = useRef<any>();
 
   const getProviderOrSigner = async (needSigner: boolean = false): Promise <void> => {
     const provider = await web3modalRef.current.connect();
-    const web3Provider = new providers.Web3provider(provider);
+    const web3Provider: any = new providers.Web3Provider(provider);
 
     const { chainId } = await web3Provider.getNetwork();
 
@@ -42,6 +47,20 @@ const DAO = (): JSX.Element => {
     }
   }
 
+  const getDAOTreasuryBalance = async (): Promise <void> => {
+    try{
+      const provider: any = await getProviderOrSigner(false);
+
+      const balance: string = await provider.getBalance(
+        DAO_CONTRACT_ADDRESS
+      );
+      setTreasuryBalance(balance.toString());
+    } catch(err) {
+      console.error(err)
+    }
+
+  } 
+
   useEffect(() => {
     if(!walletConnected) {
       web3modalRef.current = new Web3Modal({
@@ -49,7 +68,9 @@ const DAO = (): JSX.Element => {
         providerOptions: {},
         disableInjectedProvider: false
       });
-      connectWallet();
+      connectWallet().then(() => {
+        getDAOTreasuryBalance();
+      })
     }
   }, [walletConnected])
 
@@ -65,11 +86,11 @@ const DAO = (): JSX.Element => {
         </style>
       </Head>
       <div className='flex flex-col items-center justify-center h-96'>
-        <h1 className='text-4xl text-white'>Welcome to the DAO</h1>
-        <div className='text-2xl text-center my-2'>
+        <h1 className='text-4xl text-black'>Welcome to the DAO</h1>
+        <div className='text-2xl text-center my-2 text-white'>
           Your KhaNFT Balance: 1
           <br />
-          Treasury Balance: 2
+          Treasury Balance: {formatEther(treasuryBalance)} ETH
           <br />
           Total Number of Proposals: 2
         </div>
