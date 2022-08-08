@@ -16,27 +16,49 @@ const DAO = (): JSX.Element => {
 
   const [treasuryBalance, setTreasuryBalance] = useState <string> ("0");
 
+  const [numProposals, setNumProposals] = useState <string> ("0");
+
+
+
 
 
   const web3modalRef = useRef<any>();
 
+  
   const getProviderOrSigner = async (needSigner: boolean = false): Promise <void> => {
     const provider = await web3modalRef.current.connect();
     const web3Provider: any = new providers.Web3Provider(provider);
-
+    
     const { chainId } = await web3Provider.getNetwork();
-
+    
     if(chainId !== 80001) {
       toast.warning("Change your network to Mumbai");
       throw new Error("Change your network to Polygon Mumbai");
     }
-
+    
     if(needSigner) {
       const signer = web3Provider.getSigner();
       return signer;
     }
     return web3Provider;
   }
+  
+  const getDAOContractInstance = (providerOrSigner): void => {
+    return new Contract(
+      DAO_CONTRACT_ADDRESS,
+      DAO_CONTRACT_ABI,
+      providerOrSigner
+    );
+  }
+  
+  const getNFTContractInstance = (providerOrSigner): void => {
+    return new Contract(
+      KhaNFTContractAddress,
+      KHANFTCONTRACTABI,
+      providerOrSigner
+    );
+  }
+
 
   const connectWallet = async (): Promise <void> => {
     try {
@@ -59,7 +81,19 @@ const DAO = (): JSX.Element => {
       console.error(err)
     }
 
-  } 
+  }
+
+  const getNumProposalsInDAO = async (): Promise <void> => {
+    try {
+      const provider = await getProviderOrSigner(false);
+
+      
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+
 
   useEffect(() => {
     if(!walletConnected) {
