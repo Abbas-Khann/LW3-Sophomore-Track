@@ -153,8 +153,21 @@ const DAO = (): JSX.Element => {
     }
   }
 
-  console.log(proposals)
+  const voteOnProposal = async (proposalId: number, _vote): Promise <void> => {
+    try {
+      const signer: any = await getProviderOrSigner(true);
+      const contract: Contract = getDAOContractInstance(signer);
 
+      let vote: number = _vote === "YAY" ? 0 : 1;
+      const tx = await contract.voteOnProposal(proposalId, vote);
+      setLoading(true);
+      await tx.wait();
+      setLoading(false);
+      await fetchAllProposals();
+    } catch (err) {
+      console.error(err)
+    }
+  }
 
   useEffect(() => {
     if(!walletConnected) {
@@ -217,7 +230,7 @@ const DAO = (): JSX.Element => {
         className='text-2xl'
         >Purchase NFT TokenId: </p>
         <input
-        className='text-2xl w-44'
+        className='text-2xl w-44 rounded text-center'
         placeholder='0'
         type="number"
         onChange={(e) => setFakeNftTokenId(e.target.value)}
@@ -272,11 +285,14 @@ const DAO = (): JSX.Element => {
               <div
               className=''
               >
-              <button>
+              <button
+              onClick={() => voteOnProposal(p.proposalId, "YAY")}
+              >
                 Vote YAY
               </button>
               <button
               className=''
+              onClick={() => voteOnProposal(p.proposalId, "NAY")}
               >
                 Vote NAY
               </button>
