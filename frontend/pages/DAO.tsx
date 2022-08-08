@@ -169,6 +169,21 @@ const DAO = (): JSX.Element => {
     }
   }
 
+  const executeProposal = async (proposalId: number): Promise <void> => {
+    try {
+      const signer: any = await getProviderOrSigner(true);
+      const contract: Contract = getDAOContractInstance(signer);
+
+      const txn = await contract.executeProposal(proposalId);
+      setLoading(true);
+      await txn.wait();
+      setLoading(false);
+      await fetchAllProposals();
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   useEffect(() => {
     if(!walletConnected) {
       web3modalRef.current = new Web3Modal({
@@ -302,6 +317,7 @@ const DAO = (): JSX.Element => {
               <div>
                 <button
                 className=''
+                onClick={() => executeProposal(p.proposalId)}
                 >
                   Execute Proposal {" "}
                   {p.yayVotes > p.nayVotes ? "(YAY)" : "(NAY)"}
