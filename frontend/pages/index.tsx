@@ -27,7 +27,9 @@ const Home = () => {
           <Link href="/DAO">
           <li className="list-disc cursor-pointer underline mb-2">DAO</li>
           </Link>
+          <Link href="/DEX">
           <li className="list-disc cursor-pointer underline mb-2">DeFi-Exchange</li>
+          </Link>
         </ul>
     </div>
   </main>
