@@ -8,7 +8,7 @@ import {
 import { utils } from "../node_modules/ethers/lib/ethers";
 
 const addLiquidity = async (
-    signer,
+    signer: any,
     addCDAmountWei,
     addEtherAmountWei
 ): Promise <void> => {
