@@ -19,7 +19,7 @@ contract DEX is ERC20 {
 
     // Add liquidity to the exchange 
 
-    function addLiquidity(uint _amount) pubic view returns(uint) {
+    function addLiquidity(uint _amount) public payable returns(uint) {
         uint liquidity;
         uint ethBalance = address(this).balance;
         uint khanTokenReserve = getReserve();
@@ -70,7 +70,7 @@ contract DEX is ERC20 {
     ) public pure returns(uint256)
     {
         require(
-            inputReserve > 0 && outputReserve,
+            inputReserve > 0 && outputReserve > 0,
             "Invalid Response"
         );
 
