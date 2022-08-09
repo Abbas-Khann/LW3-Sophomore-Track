@@ -54,4 +54,4 @@ const calculateCD = async (
 
 
 
-export { addLiquidity, }
+export { addLiquidity, calculateCD }
