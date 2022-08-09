@@ -50,11 +50,11 @@ const DAO = (): JSX.Element => {
       console.error(err)
     }
   }
-  const getDAOContractInstance = (providerOrSigner): void => {
+  const getDAOContractInstance = (providerOrSigner): Contract => {
     return new Contract(DAO_CONTRACT_ADDRESS, DAO_CONTRACT_ABI, providerOrSigner);
   };
   
-  const getNFTContractInstance = (providerOrSigner): void => {
+  const getNFTContractInstance = (providerOrSigner): Contract => {
     return new Contract(
       KhaNFTContractAddress,
       KHANFTCONTRACTABI,
@@ -326,7 +326,7 @@ const DAO = (): JSX.Element => {
           <br />
           Treasury Balance: {formatEther(treasuryBalance)} ETH
           <br />
-          Total Number of Proposals: {Math.ceil(formatEther(numProposals))}
+          Total Number of Proposals: {(formatEther(numProposals))}
         </div>
         <div>
           <button
