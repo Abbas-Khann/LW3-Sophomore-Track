@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+// const { ethers } = require("hardhat");
 
 const { NFT_CONTRACT_ADDRESS } = require("../Constants/constants");
 
